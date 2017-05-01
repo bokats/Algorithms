@@ -1,4 +1,3 @@
-import os
 from vertex import Vertex, Edge
 from math import inf
 
@@ -7,14 +6,10 @@ file_name = "dijkstraData.txt"
 class Dijkstra(object):
     def __init__(self, file_path):
         self.vertices = {}
-        self.edges = {}
         self.convert_adj_list_to_graph(file_path)
 
     def get_vertices(self):
         return self.vertices
-
-    def get_edges(self):
-        return self.edges
 
     def find_shortest_distance(self, start_vertex_key, end_vertex_key):
         if start_vertex_key == end_vertex_key:
@@ -64,10 +59,6 @@ class Dijkstra(object):
                     if key not in self.vertices.keys():
                         self.vertices[key] = Vertex(key)
                     new_edge = Edge(self.vertices[start_key], self.vertices[key], int(el[1]))
-                    if key not in self.edges.keys():
-                        self.edges[key] = [new_edge]
-                    else:
-                        self.edges[key].append(new_edge)
                     self.vertices[start_key].add_out_edge(new_edge)
 
 
