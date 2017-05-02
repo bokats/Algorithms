@@ -23,13 +23,20 @@ class MinHeap(object):
 
     def heapify_down(self):
         current_node_idx = 0
-        swap = true
+        swap = True
         while swap:
-            swap = false
-            children = children_indeces(current_node_idx)
-            for child in children:
-                
-
+            swap = False
+            children = self.children_indeces(current_node_idx)
+            swap_idx = current_node_idx
+            for child_idx in children:
+                if self.store[child_idx] < self.store[swap_idx]:
+                    swap_idx = child_idx
+                    swap = True
+            if swap:
+                self.store[current_node_idx], self.store[swap_idx] = \
+                self.store[swap_idx], self.store[current_node_idx]
+                current_node_idx = swap_idx
+        return self.store
 
     def children_indeces(self, parent_idx):
         result = []
