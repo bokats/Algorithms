@@ -1,5 +1,6 @@
 from vertex import Vertex, Edge
 from math import inf
+from heap import MinHeap, Node
 
 file_name = "dijkstraData.txt"
 
@@ -17,31 +18,34 @@ class Dijkstra(object):
 
         visited = set([self.vertices[start_vertex_key]])
         current_vertex = self.vertices[start_vertex_key]
-        avail_edges = current_vertex.get_out_edges()
+        heap = MinHeap()
+
+        for edge in current_vertex.get_out_edges():
+            heap.insert(Node(edge.get_start_vertex().get_shortest_distance() + \
+            edge.get_distance(), edge))
 
         while current_vertex.get_key() != end_vertex_key:
-            min_distance = inf
-            min_edge = None
 
-            for edge in avail_edges:
-                if edge.get_end_vertex() not in visited:
-                    dis = edge.get_start_vertex().get_shortest_distance() + \
-                    edge.get_distance()
-                    if dis < min_distance:
-                        min_distance = dis
-                        min_edge = edge
+            while True:
+                min_node = heap.extract_min()
+                min_edge = min_node.get_edge()
+                min_distance = min_node.get_value()
+                if min_edge.get_end_vertex() not in visited:
+                    break
 
-            min_edge.get_end_vertex().set_shortest_distance(min_distance)
-            min_edge.get_end_vertex().set_path(min_edge.get_start_vertex() \
-                .get_path() + [min_edge.get_start_vertex().get_key()])
             current_vertex = min_edge.get_end_vertex()
+            current_vertex.set_shortest_distance(min_distance)
+            current_vertex.set_path(min_edge.get_start_vertex() \
+                .get_path() + [min_edge.get_start_vertex().get_key()])
             visited.add(current_vertex)
 
             for edge in current_vertex.get_out_edges():
                 if edge.get_end_vertex() not in visited:
-                    avail_edges.append(edge)
+                    heap.insert(Node(edge.get_start_vertex().get_shortest_distance() + \
+                    edge.get_distance(), edge))
 
         return current_vertex.get_shortest_distance()
+
 
     def convert_adj_list_to_graph(self, file_path):
         file = open(file_path, "r")

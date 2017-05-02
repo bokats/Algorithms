@@ -54,30 +54,34 @@ class MinHeap(object):
         return result
 
 class Node(object):
-    def __init__(self, value):
+    def __init__(self, value, edge):
         self.value = value
+        self.edge = edge
 
     def get_value(self):
         return self.value
 
+    def get_edge(self):
+        return self.edge
+
 # Tests
 
-n1 = Node(1)
-n2 = Node(2)
-n3 = Node(3)
-n4 = Node(4)
-
-h = MinHeap()
-h.insert(n4)
-assert len(h.get_store()) == 1
-h.insert(n3)
-h.insert(n2)
-h.insert(n1)
-assert len(h.get_store()) == 4
-assert h.get_store()[0] == n1
-assert h.extract_min() == n1
-assert len(h.get_store()) == 3
-assert h.extract_min() == n2
-assert len(h.get_store()) == 2
-assert h.extract_min() == n3
-assert len(h.get_store()) == 1
+# n1 = Node(1)
+# n2 = Node(2)
+# n3 = Node(3)
+# n4 = Node(4)
+#
+# h = MinHeap()
+# h.insert(n4)
+# assert len(h.get_store()) == 1
+# h.insert(n3)
+# h.insert(n2)
+# h.insert(n1)
+# assert len(h.get_store()) == 4
+# assert h.get_store()[0] == n1
+# assert h.extract_min() == n1
+# assert len(h.get_store()) == 3
+# assert h.extract_min() == n2
+# assert len(h.get_store()) == 2
+# assert h.extract_min() == n3
+# assert len(h.get_store()) == 1
