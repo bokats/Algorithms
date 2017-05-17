@@ -194,23 +194,33 @@ class TrackMedian
     size_difference = @min_heap_length - @max_heap_length
     if size_difference > 1
       @max_heap.insert(@min_heap.extract)
-      @median = (@max_heap.peek.value.to_f + @min_heap.peek.value) / 2
+      @median = @max_heap.peek.value
       @min_heap_length -= 1
       @max_heap_length += 1
     elsif size_difference < -1
       @min_heap.insert(@max_heap.extract)
-      @median = (@max_heap.peek.value.to_f + @min_heap.peek.value) / 2
+      @median = @max_heap.peek.value
       @max_heap_length -= 1
       @min_heap_length += 1
     elsif size_difference == 1
-      @median = @min_heap.peek.value.to_f
+      @median = @min_heap.peek.value
     elsif size_difference == -1
-      @median = @max_heap.peek.value.to_f
+      @median = @max_heap.peek.value
     else
-      @median = (@max_heap.peek.value.to_f + @min_heap.peek.value) / 2
+      @median = @max_heap.peek.value
     end
     @median
   end
 end
 
+
+result = []
 t = TrackMedian.new
+file = File.open('Median.txt', 'r')
+file.each_line do |line|
+  median = t.insert(line.to_i)
+  result << median
+end
+
+sum_result = result.inject(:+) % 10000
+p sum_result

@@ -34,11 +34,11 @@ class TwoSum(object):
 
 t = TwoSum()
 t.read_file('algo1-programming_prob-2sum.txt')
-# print(t.find_two_sum())
+print(t.find_two_sum())
 
-def has_two_sum(n, num_set):
-    print(n)
-    return any(((n-x) in num_set) and 2*x != n for x in num_set)
-num_set = t.set_nums
-two_sum = sum(has_two_sum(n, num_set) for n in range(-10000, 10001))
-print(two_sum)
+# def has_two_sum(n, num_set):
+#     print(n)
+#     return any(((n-x) in num_set) and 2*x != n for x in num_set)
+# num_set = t.set_nums
+# two_sum = sum(has_two_sum(n, num_set) for n in range(-10000, 10001))
+# print(two_sum)
