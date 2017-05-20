@@ -2,6 +2,9 @@ class MinHeap(object):
     def __init__(self):
         self.store = []
 
+    def get_store(self):
+        return self.store
+
     def insert(self, node):
         self.store.append(node)
         self.heapify_up()
@@ -54,6 +57,12 @@ class Node(object):
     def __init__(self, value, edge):
         self.value = value
         self.edge = edge
+
+    def get_value(self):
+        return self.value
+
+    def get_edge(self):
+        return self.edge
 
 # Tests
 
