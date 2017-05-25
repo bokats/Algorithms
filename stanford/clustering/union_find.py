@@ -15,23 +15,24 @@ class UnionFind(object):
         self.leaders = {}
 
     def add_vertex(self, vertex, leader = None):
-        if leader:
-            vertex.leader = leader
-            self.leaders[leader.key].append(vertex.key)
-        elif vertex.leader.key in self.leaders.keys():
-            self.leaders[vertex.leader.key].append(vertex.key)
-        else:
-            self.leaders[vertex.leader.key] = [vertex.key]
-        self.vertices[vertex.key] = vertex
+        if vertex.key not in self.vertices.keys():
+            if leader:
+                vertex.leader = leader
+                self.leaders[leader.key].append(vertex.key)
+            elif vertex.leader.key in self.leaders.keys():
+                self.leaders[vertex.leader.key].append(vertex.key)
+            else:
+                self.leaders[vertex.leader.key] = [vertex.key]
+            self.vertices[vertex.key] = vertex
 
     def find(self,vertex_key):
         return self.vertices[vertex_key].leader
 
     def union(self,leader_one_key,leader_two_key):
-        if len(self.leaders[leader_one]) > len(self.leaders[leader_two]):
-            merge_components(leader_one_key, leader_two_key)
+        if len(self.leaders[leader_one_key]) < len(self.leaders[leader_two_key]):
+            self.merge_components(leader_two_key, leader_one_key)
         else:
-            merge_components(leader_two_key, leader_one_key)
+            self.merge_components(leader_one_key, leader_two_key)
 
     def merge_components(self, larger_leader_key, smaller_leader_key):
         for key in self.leaders[smaller_leader_key]:
