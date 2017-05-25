@@ -17,6 +17,7 @@ class ClusteringMST(object):
                 self.union_find.add_vertex(v2)
 
     def find_max_clustering_distance(self, k):
+        result = []
         self.edges = sorted(self.edges, key=lambda edge: edge.cost)
         idx = 0
         while len(self.union_find.leaders) > k:
@@ -27,7 +28,20 @@ class ClusteringMST(object):
                 self.union_find.union(v1_leader.key, v2_leader.key)
             idx += 1
 
-        return len(self.union_find.leaders)
+        while idx < len(self.edges):
+            edge = self.edges[idx]
+            v1_leader = self.union_find.find(edge.vertex_one.key)
+            v2_leader = self.union_find.find(edge.vertex_two.key)
+            if v1_leader != v2_leader:
+                return edge.cost
+            idx += 1
+
 c = ClusteringMST()
 c.read_file('clustering.txt')
 print(c.find_max_clustering_distance(4))
+
+# tests
+
+# c = ClusteringMST()
+# c.read_file('test2.txt')
+# print(c.find_max_clustering_distance(2))
