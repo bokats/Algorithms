@@ -36,9 +36,11 @@ class ClusteringMST(object):
                 return edge.cost
             idx += 1
 
+
+
 c = ClusteringMST()
-c.read_file('clustering.txt')
-print(c.find_max_clustering_distance(4))
+# c.read_file('clustering.txt')
+# print(c.find_max_clustering_distance(4))
 
 # tests
 
