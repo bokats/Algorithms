@@ -12,21 +12,24 @@ class ClusteringMST(object):
         for line in file:
             line = line.replace(" ", "")
             if len(line) > 10:
-                self.union_find.add_vertex(count)
+                self.union_find.add_vertex(count, line)
                 if line in self.vertices.keys():
                     self.vertices[line].append(count)
                 else:
                     self.vertices[line] = [count]
                 count += 1
 
-    def find_k_clustering(self, k):
+    def find_k_clustering(self):
 
         for i in range(len(self.union_find.vertices)):
             for level in self.generate_hamming_distances(self.union_find.vertices[i][0]):
                 for test_binary in level:
                     if test_binary in self.vertices.keys():
                         for key in self.vertices[test_binary]:
-                            self.union_find.union(i, key)
+                            leader_one = self.union_find.find_leader(i)
+                            leader_two = self.union_find.find_leader(key)
+                            if leader_one != leader_two:
+                                self.union_find.union(leader_one, leader_two)
 
         return len(self.union_find.leaders)
 
@@ -66,6 +69,5 @@ class ClusteringMST(object):
         return [zero_diff, one_diff, two_diff]
 
 c = ClusteringMST()
-print(c.generate_hamming_distances('111111111111111111111111'))
 c.read_file('clustering_big.txt')
-# print(c.find_k_clustering(3))
+print(c.find_k_clustering())

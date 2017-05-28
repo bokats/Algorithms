@@ -2,7 +2,7 @@ import numpy as np
 
 class UnionFind(object):
     def __init__(self, size):
-        self.vertices = np.zeros((size,2), int)
+        self.vertices = [[None for x in range(2)] for x in range(size)]
         self.leaders = {}
 
     def add_vertex(self, key, binary):
