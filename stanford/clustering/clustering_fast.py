@@ -4,9 +4,9 @@ import numpy as np
 class ClusteringMST(object):
     def __init__(self):
         self.union_find = UnionFind(200000)
+        self.vertices = {}
 
-    def hamming_distance(self, n1, n2):
-        return bin(n1^n2).count('1')
+    # def hamming_distance(self, n1, n2):
 
     def read_file(self, filename):
         file = open(filename, 'r')
@@ -14,23 +14,21 @@ class ClusteringMST(object):
         for line in file:
             line = line.replace(" ", "")
             if len(line) > 10:
-                self.union_find.add_vertex(int(line, 2), count)
+                if line in self.vertices.keys():
+                    self.vertices[line].append(count)
+                else:
+                    self.vertices[line] = [count]
+                self.union_find.add_vertex(count)
                 count += 1
 
     def find_k_clustering(self, k):
 
-        for i in range(len(self.union_find.vertices)):
-            j = i + 1
-            print(i)
-            while j < len(self.union_find.vertices):
-                dis = self.hamming_distance(self.union_find.vertices[i][0], self.union_find.vertices[j][0])
-                if dis < k + 1 and self.union_find.find(i) != self.union_find.find(j):
-                    self.union_find.union(i, j)
-                j += 1
+
 
         return len(self.union_find.leaders)
 
     def generate_hamming_distances(self, binary):
+        binary = [el for el in binary]
         zero_diff = [binary]
         one_diff = []
         two_diff = []
@@ -62,10 +60,9 @@ class ClusteringMST(object):
                 j += 1
                 binary = binary_copy
 
-        print(len(two_diff))
-        
+        return zero_diff, one_diff, two_diff
+
 c = ClusteringMST()
-c.generate_hamming_distances('111111111111111111111111')
 
 c.read_file('clustering_big.txt')
-print(c.find_k_clustering(3))
+# print(c.find_k_clustering(3))
