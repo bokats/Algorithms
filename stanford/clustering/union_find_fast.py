@@ -2,15 +2,15 @@ import numpy as np
 
 class UnionFind(object):
     def __init__(self, size):
-        self.vertices = np.zeros(size, int)
+        self.vertices = np.zeros((size,2), int)
         self.leaders = {}
 
-    def add_vertex(self, key):
-        self.vertices[key] = key
+    def add_vertex(self, key, binary):
+        self.vertices[key] = [binary, key]
         self.leaders[key] = [key]
 
     def find_leader(self,key):
-        return self.vertices[key]
+        return self.vertices[key][1]
 
     def union(self,leader_one,leader_two):
         if len(self.leaders[leader_one]) < len(self.leaders[leader_two]):
@@ -20,6 +20,6 @@ class UnionFind(object):
 
     def merge_components(self, larger_leader_key, smaller_leader_key):
         for key in self.leaders[smaller_leader_key]:
-            self.vertices[key] = larger_leader_key
+            self.vertices[key][1] = larger_leader_key
             self.leaders[larger_leader_key].append(key)
         del self.leaders[smaller_leader_key]

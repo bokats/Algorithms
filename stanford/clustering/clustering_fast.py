@@ -6,8 +6,6 @@ class ClusteringMST(object):
         self.union_find = UnionFind(200000)
         self.vertices = {}
 
-    # def hamming_distance(self, n1, n2):
-
     def read_file(self, filename):
         file = open(filename, 'r')
         count = 0
@@ -23,7 +21,12 @@ class ClusteringMST(object):
 
     def find_k_clustering(self, k):
 
-
+        for i in range(len(self.union_find.vertices)):
+            for level in self.generate_hamming_distances(self.union_find.vertices[i][0]):
+                for test_binary in level:
+                    if test_binary in self.vertices.keys():
+                        for key in self.vertices[test_binary]:
+                            self.union_find.union(i, key)
 
         return len(self.union_find.leaders)
 
@@ -60,7 +63,7 @@ class ClusteringMST(object):
                 j += 1
                 binary = binary_copy[:]
 
-        return zero_diff, one_diff, two_diff
+        return [zero_diff, one_diff, two_diff]
 
 c = ClusteringMST()
 print(c.generate_hamming_distances('111111111111111111111111'))
