@@ -35,19 +35,6 @@ class Knapsack(object):
 
         return self.grid[len(self.grid) - 1][len(self.grid[0]) - 1]
 
-    def find_optimal_fast(self):
-        for weight in range(self.max_weight + 1):
-            self.values[weight] = [0,0]
-
-        for item_idx in range(len(self.items)):
-            item = self.items[item_idx]
-            if not self.max_weight < item[1]:
-                if self.values[self.max_weight - item[1]][1] < item_idx:
-                    import pdb; pdb.set_trace()
-                    self.find_table_values(self.max_weight - item[1], item_idx)
-                self.values[self.max_weight][0] = max(item[0] + self.values[self.max_weight - item[1]][0], self.values[self.max_weight][0])
-        return self.values[self.max_weight][0]
-
     def find_chosen_items(self):
 
         item_idx = len(self.items)
@@ -57,14 +44,38 @@ class Knapsack(object):
             if self.grid[item_idx][weight] > self.grid[item_idx - 1][weight]:
                 taken_items.append(self.items[item_idx - 1])
                 weight -= self.items[item_idx - 1][1]
-            item_idx -= 1
+                item_idx -= 1
 
-        return taken_items
+                return taken_items
 
-    def find_table_values(self, weight, item_idx):
+    def find_optimal_fast(self):
+        for weight in range(self.max_weight + 1):
+            self.values[weight] = np.zeros(1,int)
 
-        while self.values[weight][1] < item_idx:
-            item = self.items[self.values[weight][1]]
+        self.values[self.max_weight] = np.zeros(len(self.items) + 1, int)
+
+        for item_idx in range(len(self.items)):
+            item = self.items[item_idx]
+            if self.max_weight < item[1]:
+                self.values[self.max_weight][item_idx + 1] = \
+                self.values[self.max_weight][item_idx]
+            else:
+                if len(self.values[self.max_weight - item[1]) - 1 < item_idx:
+                    self.find_table_values(self.max_weight - item[1], item_idx + 1)
+                self.values[self.max_weight][item_idx + 1] = \
+                max(item[0] + self.values[self.max_weight - item[1]][item_idx], \
+                self.values[self.max_weight][item_idx])
+        return self.values[self.max_weight][-1]
+
+
+    def find_table_values(self, weight, length):
+
+        count = len(self.values[weight])
+        new_arr = np.zeros(length - count, int)
+        self.values[weight] = np.concatenate((self.values[weight], new_arr))
+        while count < length:
+            item = self.items[count - 1]
+            if weight < item[1]:
             if not weight < item[1]:
                 if self.values[weight - item[1]][1] < self.values[weight][1]:
                     self.find_table_values(weight - item[1], self.values[weight][1])
