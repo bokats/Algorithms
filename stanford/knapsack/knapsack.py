@@ -36,18 +36,7 @@ class Knapsack(object):
     def find_optimal_fast(self):
         prev_row = np.zeros(self.weight + 1, int)
 
-        item_idx = 0
-        while item_idx < len(self.items):
-            print(item_idx)
-            item = self.items[item_idx]
-            new_row = np.zeros(self.weight + 1, int)
-            for weight in range(len(new_row)):
-                if weight < item[1]:
-                    new_row[weight] = prev_row[weight]
-                else:
-                    new_row[weight] = max(item[0] + prev_row[weight - item[1]], prev_row[weight])
-            prev_row = new_row
-            item_idx += 1
+
 
         return new_row[-1]
 
