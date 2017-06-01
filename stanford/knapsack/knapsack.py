@@ -84,10 +84,10 @@ class Knapsack(object):
                 self.values[weight][count -1])
             count += 1
 k = Knapsack()
-# k.read_file('knapsack_big.txt')
+k.read_file('knapsack_big.txt')
 # k.read_file('knapsack1.txt')
 # k.read_file('test2.txt')
-k.read_file('test1.txt')
+# k.read_file('test1.txt')
 # print(k.find_optimal())
 # print(k.find_chosen_items())
 print(k.find_optimal_fast())
