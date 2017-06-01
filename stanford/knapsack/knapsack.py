@@ -60,7 +60,7 @@ class Knapsack(object):
                 self.values[self.max_weight][item_idx + 1] = \
                 self.values[self.max_weight][item_idx]
             else:
-                if len(self.values[self.max_weight - item[1]) - 1 < item_idx:
+                if len(self.values[self.max_weight - item[1]]) - 1 < item_idx:
                     self.find_table_values(self.max_weight - item[1], item_idx + 1)
                 self.values[self.max_weight][item_idx + 1] = \
                 max(item[0] + self.values[self.max_weight - item[1]][item_idx], \
@@ -69,7 +69,6 @@ class Knapsack(object):
 
 
     def find_table_values(self, weight, length):
-
         count = len(self.values[weight])
         new_arr = np.zeros(length - count, int)
         self.values[weight] = np.concatenate((self.values[weight], new_arr))
@@ -78,8 +77,8 @@ class Knapsack(object):
             if weight < item[1]:
                 self.values[weight][count] = self.values[weight][count - 1]
             else:
-                if len(self.values[weight - item[1]]) - 1 < len(self.values[weight]):
-                    self.find_table_values(weight - item[1], len(self.values[weight]) - 1)
+                if len(self.values[weight - item[1]]) < count:
+                    self.find_table_values(weight - item[1], count)
                 self.values[weight][count] = \
                 max(item[0] + self.values[weight - item[1]][count - 1], \
                 self.values[weight][count -1])
@@ -88,7 +87,7 @@ k = Knapsack()
 # k.read_file('knapsack_big.txt')
 # k.read_file('knapsack1.txt')
 # k.read_file('test2.txt')
-k.read_file('test3.txt')
+k.read_file('test1.txt')
 # print(k.find_optimal())
 # print(k.find_chosen_items())
 print(k.find_optimal_fast())
