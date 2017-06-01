@@ -40,42 +40,43 @@ class Knapsack(object):
             self.values[weight] = [0,0]
 
         for item_idx in range(len(self.items)):
-            print(item_idx)
             item = self.items[item_idx]
             if not self.max_weight < item[1]:
                 if self.values[self.max_weight - item[1]][1] < item_idx:
+                    import pdb; pdb.set_trace()
                     self.find_table_values(self.max_weight - item[1], item_idx)
                 self.values[self.max_weight][0] = max(item[0] + self.values[self.max_weight - item[1]][0], self.values[self.max_weight][0])
-            # import pdb; pdb.set_trace()
         return self.values[self.max_weight][0]
 
-    def find_choses_items(self):
+    def find_chosen_items(self):
 
         item_idx = len(self.items)
-        weight = self.weight
+        weight = self.max_weight
         taken_items = []
         while item_idx > 0:
             if self.grid[item_idx][weight] > self.grid[item_idx - 1][weight]:
+                taken_items.append(self.items[item_idx - 1])
+                weight -= self.items[item_idx - 1][1]
+            item_idx -= 1
 
-
-            ]
+        return taken_items
 
     def find_table_values(self, weight, item_idx):
 
         while self.values[weight][1] < item_idx:
             item = self.items[self.values[weight][1]]
-            # import pdb; pdb.set_trace()
             if not weight < item[1]:
                 if self.values[weight - item[1]][1] < self.values[weight][1]:
-                    # import pdb; pdb.set_trace()
                     self.find_table_values(weight - item[1], self.values[weight][1])
                 self.values[weight][0] = max(item[0] + self.values[weight - item[1]][0], self.values[weight][0])
             self.values[weight][1] += 1
-            # print(self.values[weight])
+
 
 k = Knapsack()
 # k.read_file('knapsack_big.txt')
 # k.read_file('knapsack1.txt')
-k.read_file('test2.txt')
-print(k.find_optimal())
-# print(k.find_optimal_fast())
+# k.read_file('test2.txt')
+k.read_file('test3.txt')
+# print(k.find_optimal())
+# print(k.find_chosen_items())
+print(k.find_optimal_fast())
