@@ -1,12 +1,6 @@
 import numpy as np
 import math
 
-class Vertex(object):
-    def __init__(self):
-        self.key = key
-        self.in_edges = np.array([], int)
-        self.distance = math.inf
-
 class BellmanFord(object):
     def __init__(self):
         self.edges = None
@@ -49,8 +43,6 @@ class BellmanFord(object):
                 self.in_edges[edge[1]] = np.array([count], int)
             count += 1
 
-        print(self.edges)
-
     def run_bellman_ford(self):
         prev_row = np.full(self.number_of_vertices + 2, np.inf)
 
@@ -66,11 +58,17 @@ class BellmanFord(object):
                         min_distance = prev_row[edge[0]] + edge[2]
                 new_row[j] = min(prev_row[j], min_distance)
             prev_row = np.copy(new_row)
+        self.reweight_edges(prev_row)
 
-        return prev_row
+    def reweight_edges(self, distances):
+        for i in range(self.number_of_edges):
+            # import pdb; pdb.set_trace()
+            edge = self.edges[i]
+            edge[2] = edge[2] - distances[edge[1]] + distances[edge[0]]
+            self.edges[i] = edge
 
 
 bf = BellmanFord()
 bf.read_file('test1.txt')
 bf.set_up_dummy_start_vertex()
-print(bf.run_bellman_ford())
+bf.run_bellman_ford()
