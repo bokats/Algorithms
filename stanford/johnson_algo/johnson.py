@@ -11,7 +11,6 @@ class BellmanFord(object):
     def __init__(self):
         self.edges = None
         self.in_edges = {}
-        self.distances = None
         self.number_of_edges = 0
         self.number_of_vertices = 0
 
@@ -26,7 +25,6 @@ class BellmanFord(object):
                 self.number_of_edges = line[1]
                 self.number_of_vertices = line[0]
                 self.edges = np.zeros((line[1], 3), int)
-                self.distances = np.zeros(line[0] + 1, float)
             else:
                 self.edges[count] = line
                 if line[1] in self.in_edges.keys():
@@ -34,9 +32,6 @@ class BellmanFord(object):
                 else:
                     self.in_edges[line[1]] = np.array([count], int)
                 count += 1
-
-        for i in range(len(self.distances)):
-            self.distances[i] = math.inf
 
 
     def set_up_dummy_start_vertex(self):
@@ -54,10 +49,19 @@ class BellmanFord(object):
                 self.in_edges[edge[1]] = np.array([count], int)
             count += 1
 
-        print(self.edges[self.number_of_edges])
-        print(self.edges[self.number_of_edges - 1])
-        print(self.edges[self.number_of_edges + 1])
-        print(self.edges[self.number_of_edges + 1000 -1])
+    def run_bellman_ford(self):
+        prev_row = np.full(self.number_of_vertices + 2, np.inf)
+        prev_row[self.number_of_vertices + 1] = 0
+        for _ in range(len(self.edges)):
+            new_row = np.zeros(self.number_of_vertices + 2, int)
+            for j in range(1, len(new_row)):
+                min_distance = np.inf
+                for edge in self.in_edges[j]:
+                    if prev_row[edge[0]] != np.inf and prev_row[edge[0]] + edge[2] < min_distance:
+                        min_distance = prev_row[edge[0]] + edge[2]
+                new_row[j] = min(prev_row[j], min_distance)
+                
+
 
 bf = BellmanFord()
 bf.read_file('g1.txt')
