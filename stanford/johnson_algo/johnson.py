@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 class BellmanFord(object):
     def __init__(self):
@@ -7,6 +6,7 @@ class BellmanFord(object):
         self.in_edges = {}
         self.number_of_edges = 0
         self.number_of_vertices = 0
+        self.distances = None
 
     def read_file(self,filename):
         file = open(filename, 'r')
@@ -58,17 +58,30 @@ class BellmanFord(object):
                         min_distance = prev_row[edge[0]] + edge[2]
                 new_row[j] = min(prev_row[j], min_distance)
             prev_row = np.copy(new_row)
-        self.reweight_edges(prev_row)
 
-    def reweight_edges(self, distances):
+        self.distances = np.copy(prev_row)
+        # self.reweight_edges(self.distances)
+
+    def check_for_cycles(self):
+        for vertex in range(1, len(self.distances) - 1):
+            min_distance = np.inf
+            for edge_idx in self.in_edges[vertex]:
+                edge = self.edges[edge_idx]
+                if self.distances[edge[0]] != np.inf and self.distances[edge[0]] + edge[2] < min_distance:
+                    min_distance = self.distances[edge[0]] + edge[2]
+            if min(self.distances[vertex], min_distance) != self.distances[vertex]:
+                return True
+
+        return False
+
+    def reweight_edges(self):
         for i in range(self.number_of_edges):
-            # import pdb; pdb.set_trace()
             edge = self.edges[i]
-            edge[2] = edge[2] - distances[edge[1]] + distances[edge[0]]
+            edge[2] = edge[2] - self.distances[edge[1]] + self.distances[edge[0]]
             self.edges[i] = edge
 
-
 bf = BellmanFord()
-bf.read_file('test1.txt')
+bf.read_file('test2.txt')
 bf.set_up_dummy_start_vertex()
 bf.run_bellman_ford()
+print(bf.check_for_cycles())
