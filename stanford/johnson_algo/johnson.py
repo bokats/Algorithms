@@ -1,6 +1,5 @@
 import numpy as np
 from heap import MinHeap
-from dijkstra import Dijkstra
 
 class Johnson(object):
     def __init__(self):
@@ -82,6 +81,8 @@ class Johnson(object):
             edge[2] = edge[2] - self.distances[edge[1]] + self.distances[edge[0]]
             self.edges[i] = edge
 
+        print(self.edges)
+
     def run_dijksta(self):
         for i in range(self.number_of_edges):
             edge = self.edges[i]
@@ -90,35 +91,56 @@ class Johnson(object):
             else:
                 self.out_edges[edge[0]] = np.array([i], int)
 
+
+        shortest_distance = np.inf
+        shortest_path = []
+
         for vertex in range(1, self.number_of_vertices + 1):
-            
+            shortest = self.dijksra(vertex)
+            if shortest[0] < shortest_distance:
+                shortest_distance = shortest[0]
+                shortest_path = [vertex, shortest[1]]
+
+        return shortest_distance - self.distances[shortest_path[0]] + \
+        self.distances[shortest_path[1]]
 
     def dijksra(self, start_vertex):
 
-        shortest_distances = np.zeros(self.number_of_vertices + 1, int)
+        shortest_distances = np.full(self.number_of_vertices + 1, np.inf)
         visited = set([start_vertex])
         current_vertex = start_vertex
         heap = MinHeap()
 
-        for edge_idx in self.out_edges[current_vertex]:
-            edge = self.edges[edge_idx]
-            heap.insert([edge[2], edge[0], edge[1]])
+        if current_vertex in self.out_edges.keys():
+            for edge_idx in self.out_edges[current_vertex]:
+                edge = self.edges[edge_idx]
+                heap.insert([edge[2], edge[0], edge[1]])
 
-        while len(visited) < self.number_of_vertices:
+        while not heap.empty():
 
             while True:
-                min_edge = heap.extract_min()
-                if min_edge[2] not in visited:
-                    break
+                if heap.empty():
+                    min_edge = None
+                else:
+                    min_edge = heap.extract_min()
+                    if min_edge[2] not in visited:
+                        break
+                        
+            import pdb; pdb.set_trace()
+            if not min_edge:
+                break
 
             current_vertex = min_edge[2]
             shortest_distances[current_vertex] = min_edge[0]
             visited.add(current_vertex)
 
-            for edge_idx in self.out_edges[current_vertex]:
-                edge = self.edges[edge_idx]
-                if edge[1] not in visited:
-                    heap.insert([shortest_distances[current_vertex] + edge[2], edge[0], edge[1]])
+            if current_vertex in self.out_edges.keys():
+                for edge_idx in self.out_edges[current_vertex]:
+                    edge = self.edges[edge_idx]
+                    if edge[1] not in visited:
+                        heap.insert([shortest_distances[current_vertex] + edge[2], edge[0], edge[1]])
+
+
 
         shortest_distances[start_vertex] = np.inf
         shortest_distance = np.inf
@@ -129,10 +151,25 @@ class Johnson(object):
                 shortest_distance = shortest_distances[i]
                 shortest_end_vertex = i
 
-        return shortest_distance, shortest_end_vertex
+        return [shortest_distance, shortest_end_vertex]
 
+    def run_johnson(self, filename):
 
-bf = BellmanFord()
-bf.read_file('test2.txt')
-bf.set_up_dummy_start_vertex()
-bf.run_bellman_ford()
+        self.read_file(filename)
+        self.set_up_dummy_start_vertex()
+        self.run_bellman_ford()
+        if self.check_for_cycles():
+            return None
+        else:
+            self.reweight_edges()
+            return self.run_dijksta()
+
+filenames = ['test4.txt']
+shortest = np.inf
+for filename in filenames:
+    j = Johnson()
+    result = j.run_johnson(filename)
+    if result < shortest:
+        shortest = result
+
+print(result)

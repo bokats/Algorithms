@@ -6,6 +6,12 @@ class MinHeap(object):
         self.store.append(edge)
         self.heapify_up()
 
+    def empty(self):
+        if self.store:
+            return False
+        else:
+            return True
+
     def extract_min(self):
         self.store[0], self.store[-1] = self.store[-1], self.store[0]
         min_node = self.store.pop()
