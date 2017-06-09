@@ -1,9 +1,12 @@
 import numpy as np
+from heap import MinHeap
+from dijkstra import Dijkstra
 
-class BellmanFord(object):
+class Johnson(object):
     def __init__(self):
         self.edges = None
         self.in_edges = {}
+        self.out_edges = {}
         self.number_of_edges = 0
         self.number_of_vertices = 0
         self.distances = None
@@ -60,7 +63,6 @@ class BellmanFord(object):
             prev_row = np.copy(new_row)
 
         self.distances = np.copy(prev_row)
-        # self.reweight_edges(self.distances)
 
     def check_for_cycles(self):
         for vertex in range(1, len(self.distances) - 1):
@@ -80,8 +82,57 @@ class BellmanFord(object):
             edge[2] = edge[2] - self.distances[edge[1]] + self.distances[edge[0]]
             self.edges[i] = edge
 
+    def run_dijksta(self):
+        for i in range(self.number_of_edges):
+            edge = self.edges[i]
+            if edge[0] in self.out_edges.keys():
+                self.out_edges[edge[0]] = np.append(self.out_edges[edge[0]], [i])
+            else:
+                self.out_edges[edge[0]] = np.array([i], int)
+
+        for vertex in range(1, self.number_of_vertices + 1):
+            
+
+    def dijksra(self, start_vertex):
+
+        shortest_distances = np.zeros(self.number_of_vertices + 1, int)
+        visited = set([start_vertex])
+        current_vertex = start_vertex
+        heap = MinHeap()
+
+        for edge_idx in self.out_edges[current_vertex]:
+            edge = self.edges[edge_idx]
+            heap.insert([edge[2], edge[0], edge[1]])
+
+        while len(visited) < self.number_of_vertices:
+
+            while True:
+                min_edge = heap.extract_min()
+                if min_edge[2] not in visited:
+                    break
+
+            current_vertex = min_edge[2]
+            shortest_distances[current_vertex] = min_edge[0]
+            visited.add(current_vertex)
+
+            for edge_idx in self.out_edges[current_vertex]:
+                edge = self.edges[edge_idx]
+                if edge[1] not in visited:
+                    heap.insert([shortest_distances[current_vertex] + edge[2], edge[0], edge[1]])
+
+        shortest_distances[start_vertex] = np.inf
+        shortest_distance = np.inf
+        shortest_end_vertex = None
+
+        for i in range(len(shortest_distances)):
+            if shortest_distances[i] < shortest_distance:
+                shortest_distance = shortest_distances[i]
+                shortest_end_vertex = i
+
+        return shortest_distance, shortest_end_vertex
+
+
 bf = BellmanFord()
 bf.read_file('test2.txt')
 bf.set_up_dummy_start_vertex()
 bf.run_bellman_ford()
-print(bf.check_for_cycles())

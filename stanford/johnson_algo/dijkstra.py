@@ -1,4 +1,3 @@
-from vertex import Vertex, Edge
 from math import inf
 from heap import MinHeap, Node
 
