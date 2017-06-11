@@ -1,4 +1,5 @@
 import numpy as np
+from heap import MinHeap
 
 class Johnson(object):
     def __init__(self):
@@ -76,8 +77,8 @@ class Johnson(object):
             edge = self.edges[i]
             self.edges[i] = [edge[0], edge[1], edge[2] + self.distances[edge[0]] - self.distances[edge[1]]]
 
-    def dijksra(self,start_vertex):
-        distances = np.full(self.number_of_vertices, 2147483647)
+    def dijkstra(self,start_vertex):
+        distances = np.full(self.number_of_vertices, 2147483647, int)
         visited = set([start_vertex])
         current_vertex = start_vertex
         heap = MinHeap()
@@ -129,15 +130,13 @@ class Johnson(object):
             self.reweight_edges()
             shortest_shortest_distance = 2147483647
             for v in range(1, self.number_of_vertices):
-                dijkstra = self.dijkstra(v)
-                if dijkstra < shortest_shortest_distance:
-                    shortest_shortest_distance = dijkstra
+                print(v)
+                d_result = self.dijkstra(v)
+                if d_result < shortest_shortest_distance:
+                    shortest_shortest_distance = d_result
 
         return shortest_shortest_distance
 
 j = Johnson()
-j.read_file('test1.txt')
-j.create_dummy_node()
-j.reweight_edges()
-# print(bf.bellman_ford(1))
-# print(bf.find_shortest_distance())
+j.read_file('g3.txt')
+print(j.johnson())
