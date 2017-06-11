@@ -20,50 +20,42 @@ class BellmanFord(object):
                 self.edges = np.zeros((line[1], 3), int)
             else:
                 self.edges[count] = line
-                if line[1] in self.in_edges.keys():
-                    self.in_edges[line[1]] = np.append(self.in_edges[line[1]], [count])
-                else:
-                    self.in_edges[line[1]] = np.array([count], int)
                 count += 1
 
+    def find_shortest_distance(self):
+        shortest = 2147483647
+        for v in range(1, self.number_of_vertices):
+            sub_result = self.bellman_ford(v)
+            if sub_result is None:
+                return None
+            if sub_result < shortest:
+                shortest = sub_result
+        return shortest
+
     def bellman_ford(self, start_vertex):
-        prev_row = np.full(self.number_of_vertices + 1, 2147483647, int)
-        prev_row[start_vertex] = 0
+        distances = np.full(self.number_of_vertices + 1, 2147483647, int)
+        distances[start_vertex] = 0
 
-        for _ in range(self.number_of_edges):
-            new_row = np.full(self.number_of_vertices + 1, 2147483647, int)
-            for v in range(1, len(new_row)):
-                if v in self.in_edges.keys():
-                    min_distance = 2147483647
-                    for edge_idx in self.in_edges[v]:
-                        edge = self.edges[edge_idx]
-                        if prev_row[edge[0]] != 2147483647 and prev_row[edge[0]] + edge[2] < min_distance:
-                            min_distance = prev_row[edge[0]] + edge[2]
-                    new_row[v] = min(prev_row[v], min_distance)
-                else:
-                    new_row[v] = prev_row[v]
-            if np.array_equal(prev_row, new_row):
-                break
-            prev_row = np.copy(new_row)
+        for v in range(self.number_of_vertices - 1):
+            changes = 0
+            print(v)
+            for i in range(self.number_of_edges):
+                edge = self.edges[i]
+                if distances[edge[0]] != 2147483647 and distances[edge[0]] + edge[2] < distances[edge[1]]:
+                    distances[edge[1]] = distances[edge[0]] + edge[2]
+                    changes += 1
+            if changes == 0:
+                return min(distances)
 
-        if self.check_for_cycles(prev_row):
-            return None
-        else:
-            return new_row
+        for i in range(self.number_of_edges):
+            edge = self.edges[i]
+            if distances[edge[0]] != 2147483647 and distances[edge[0]] + edge[2] < distances[edge[1]]:
+                print('Negative cycle')
+                return None
 
-    def check_for_cycles(self, prev_row):
-        for v in range(1, len(prev_row)):
-            if v in self.in_edges.keys():
-                min_distance = 2147483647
-                for edge_idx in self.in_edges[v]:
-                    edge = self.edges[edge_idx]
-                    if prev_row[edge[0]] != 2147483647 and prev_row[edge[0]] + edge[2] < min_distance:
-                        min_distance = prev_row[edge[0]] + edge[2]
-                if min(prev_row[v], min_distance) != prev_row[v]:
-                    return True
-
-        return False
+        return min(distances)
 
 bf = BellmanFord()
-bf.read_file('test1.txt')
-print(bf.bellman_ford(1))
+bf.read_file('g1.txt')
+# print(bf.bellman_ford(1))
+print(bf.find_shortest_distance())
