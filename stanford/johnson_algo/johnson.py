@@ -50,7 +50,8 @@ class Johnson(object):
 
         prev_row[self.number_of_vertices + 1] = 0
 
-        for _ in range(len(self.edges)):
+        for i in range(len(self.edges)):
+            print(i)
             new_row = np.zeros(self.number_of_vertices + 2)
             for j in range(1, len(new_row) - 1):
                 min_distance = np.inf
@@ -62,6 +63,7 @@ class Johnson(object):
             prev_row = np.copy(new_row)
 
         self.distances = np.copy(prev_row)
+        print(self.distances)
 
     def check_for_cycles(self):
         for vertex in range(1, len(self.distances) - 1):
@@ -96,6 +98,7 @@ class Johnson(object):
         shortest_path = []
 
         for vertex in range(1, self.number_of_vertices + 1):
+            print(vertex)
             shortest = self.dijksra(vertex)
             if shortest[0] < shortest_distance:
                 shortest_distance = shortest[0]
@@ -121,12 +124,12 @@ class Johnson(object):
             while True:
                 if heap.empty():
                     min_edge = None
+                    break
                 else:
                     min_edge = heap.extract_min()
                     if min_edge[2] not in visited:
                         break
-                        
-            import pdb; pdb.set_trace()
+
             if not min_edge:
                 break
 
@@ -164,7 +167,7 @@ class Johnson(object):
             self.reweight_edges()
             return self.run_dijksta()
 
-filenames = ['test4.txt']
+filenames = ['g1.txt']
 shortest = np.inf
 for filename in filenames:
     j = Johnson()
