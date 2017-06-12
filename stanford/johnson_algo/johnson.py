@@ -130,7 +130,6 @@ class Johnson(object):
             self.reweight_edges()
             shortest_shortest_distance = 2147483647
             for v in range(1, self.number_of_vertices):
-                print(v)
                 d_result = self.dijkstra(v)
                 if d_result < shortest_shortest_distance:
                     shortest_shortest_distance = d_result
