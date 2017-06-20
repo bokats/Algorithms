@@ -1,6 +1,7 @@
 import numpy as np
 from math import sqrt
 import itertools
+import copy
 
 class TSP(object):
     def __init__(self):
@@ -30,16 +31,18 @@ class TSP(object):
         for i in range(1, self.number_of_cities + 1):
             for j in range(1, self.number_of_cities + 1):
                 self.distances[i][j] = self.calculate_distance(self.coordinates[i], self.coordinates[j])
+
         results = {}
         results[tuple([1])] = np.zeros(self.number_of_cities + 1)
         for m in range(2, self.number_of_cities + 1):
             print(m)
+            new_results = {}
             for C in itertools.combinations(range(1, self.number_of_cities + 1), m):
                 if 1 not in C:
                     continue
                 for j in C:
                     if j == 1:
-                        results[C] = np.full(self.number_of_cities + 1, np.inf)
+                        new_results[C] = np.full(self.number_of_cities + 1, np.inf)
                     else:
                         minimum = np.inf
                         for k in C:
@@ -48,7 +51,8 @@ class TSP(object):
                                 temp.remove(j)
                                 if results[tuple(temp)][k] + self.distances[k][j] < minimum:
                                     minimum = results[tuple(temp)][k] + self.distances[k][j]
-                        results[tuple(C)][j] = minimum
+                        new_results[tuple(C)][j] = minimum
+            results = copy.deepcopy(new_results)
 
         shortest_dis = np.inf
         for j in range(2, self.number_of_cities + 1):
