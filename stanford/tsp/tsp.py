@@ -2,6 +2,7 @@ import numpy as np
 from math import sqrt
 import itertools
 import copy
+import timeit
 
 class TSP(object):
     def __init__(self):
@@ -36,6 +37,7 @@ class TSP(object):
         results[tuple([1])] = np.zeros(self.number_of_cities + 1)
         for m in range(2, self.number_of_cities + 1):
             print(m)
+            start_time = timeit.default_timer()
             new_results = {}
             for C in itertools.combinations(range(1, self.number_of_cities + 1), m):
                 if 1 not in C:
@@ -53,6 +55,7 @@ class TSP(object):
                                     minimum = results[tuple(temp)][k] + self.distances[k][j]
                         new_results[tuple(C)][j] = minimum
             results = copy.deepcopy(new_results)
+            print(timeit.default_timer() - start_time)
 
         shortest_dis = np.inf
         for j in range(2, self.number_of_cities + 1):
@@ -70,5 +73,5 @@ class TSP(object):
         return total
 
 tsp = TSP()
-tsp.read_file('test1.txt')
+tsp.read_file('tsp.txt')
 print(tsp.solve_tsp_dp())
