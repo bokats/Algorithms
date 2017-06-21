@@ -37,17 +37,16 @@ function solve_tsp_dp(filename)
   for m in range(2, number_of_cities - 1)
     println(m)
     new_result = Dict{BitArray, Array{Float64,1}}()
-    tic()
-    for c in combinations(cities[2:number_of_cities], m - 1)
-      a = append!([1], c)
+    for ex_one_combo in combinations(cities[2:number_of_cities], m - 1)
+      inc_one_combo = append!([1], ex_one_combo)
       combo = BitArray{1}(number_of_cities)
-      for num in a
+      for num in inc_one_combo
         combo[num] = true
       end
       new_result[combo] = fill(Inf, number_of_cities)
-      for j in c
+      for j in ex_one_combo
         minimum = Inf
-        for k in a
+        for k in inc_one_combo
           if k != j
             combo[j] = false
             score = result[combo][k] + distances[k,j]
@@ -61,7 +60,6 @@ function solve_tsp_dp(filename)
       end
     end
     result = copy(new_result)
-    toc()
   end
   shortest_dis = Inf
   all_cities = trues(number_of_cities)
@@ -71,7 +69,7 @@ function solve_tsp_dp(filename)
       shortest_dis = score
     end
   end
-  println(shortest_dis)
+  return shortest_dis
 end
 
 function find_distances(coord::Array{Float64, 2})
@@ -85,7 +83,4 @@ function find_distances(coord::Array{Float64, 2})
   return distances
 end
 
-
-# read_file("test1.txt")
-# println(find_distances([0.0 2.0; 0.0 5.0]))
 solve_tsp_dp("tsp.txt")
