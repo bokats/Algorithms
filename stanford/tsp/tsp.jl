@@ -27,41 +27,47 @@ end
 
 function solve_tsp_dp(filename)
   coordinates, number_of_cities = read_file(filename)
-  cities = [Int8(x) for x in range(1, number_of_cities)]
+  cities = [x for x in range(1, number_of_cities)]
   distances = find_distances(coordinates)
-  result = Dict{Array{Int8,1}, Array{Float64,1}}()
-  result[[Int8(1)]] = zeros(number_of_cities)
+  result = Dict{BitArray, Array{Float64,1}}()
+  first_row = BitArray{1}(number_of_cities)
+  first_row[1] = true
+  result[first_row] = zeros(number_of_cities)
 
   for m in range(2, number_of_cities - 1)
     println(m)
     tic()
-    new_result = Dict{Array{Int8,1}, Array{Float64,1}}()
+    new_result = Dict{BitArray, Array{Float64,1}}()
     for c in combinations(cities[2:number_of_cities], m - 1)
-      combo = append!([Int8(1)], Array{Int8,1}(c))
-      for j in combo
-        if j == 1
-          new_result[combo] = fill(Inf, number_of_cities)
-        else
-          minimum = Inf
-          for k in combo
+      c = append!([1], c)
+      combo = BitArray{1}(number_of_cities)
+      for num in c
+        combo[num] = true
+      end
+      new_result[combo] = fill(Inf, number_of_cities)
+      for j in c
+        minimum = Inf
+        if j != 1
+          for k in c
             if k != j
-              temp = copy(combo)
-              deleteat!(temp, findin(temp, [j]))
-              if result[temp][k] + distances[k,j] < minimum
-                minimum = result[temp][k] + distances[k,j]
+              combo[j] = false
+              if result[combo][k] + distances[k,j] < minimum
+                minimum = result[combo][k] + distances[k,j]
               end
+              combo[j] = true
             end
           end
-          new_result[combo][j] = minimum
         end
+        new_result[combo][j] = minimum
       end
     end
     result = copy(new_result)
     toc()
   end
   shortest_dis = Inf
+  all_cities = trues(number_of_cities)
   for j in range(2, number_of_cities - 1)
-    score = result[cities][j] + distances[j,1]
+    score = result[all_cities][j] + distances[j,1]
     if score < shortest_dis
       shortest_dis = score
     end

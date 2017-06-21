@@ -73,5 +73,5 @@ class TSP(object):
         return total
 
 tsp = TSP()
-tsp.read_file('tsp.txt')
+tsp.read_file('test1.txt')
 print(tsp.solve_tsp_dp())
