@@ -7,4 +7,4 @@ function estimate_time(start, finish,time)
   println(time / 3600)
 end
 
-estimate_time(12,25,95)
+estimate_time(10,25,33)

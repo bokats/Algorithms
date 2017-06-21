@@ -36,26 +36,25 @@ function solve_tsp_dp(filename)
 
   for m in range(2, number_of_cities - 1)
     println(m)
-    tic()
     new_result = Dict{BitArray, Array{Float64,1}}()
+    tic()
     for c in combinations(cities[2:number_of_cities], m - 1)
-      c = append!([1], c)
+      a = append!([1], c)
       combo = BitArray{1}(number_of_cities)
-      for num in c
+      for num in a
         combo[num] = true
       end
       new_result[combo] = fill(Inf, number_of_cities)
       for j in c
         minimum = Inf
-        if j != 1
-          for k in c
-            if k != j
-              combo[j] = false
-              if result[combo][k] + distances[k,j] < minimum
-                minimum = result[combo][k] + distances[k,j]
-              end
-              combo[j] = true
+        for k in a
+          if k != j
+            combo[j] = false
+            score = result[combo][k] + distances[k,j]
+            if score < minimum
+              minimum = score
             end
+            combo[j] = true
           end
         end
         new_result[combo][j] = minimum
