@@ -7,6 +7,12 @@ class TSPHeuristic(object):
         self.edges = None
         self.number_of_cities
         self.cities = None
+        self.visited = set([])
+        self.run_tsp(filename)
+
+    def run_tsp(self, filename):
+        self.read_file(filename)
+        self.find_min_spanning_tree()
 
     def read_file(self, filename):
         f = open(filename, 'r')
@@ -24,75 +30,39 @@ class TSPHeuristic(object):
     def calculate_distance(self,coord1, coord2):
         return sqrt((coord1[0] - coord2[0])**2 + (coord1[1] - coord2[1])**2)
 
-    def find_edges(self,city,visited):
+    def find_edges(self,city):
         edges = []
         for i in range(1, len(self.cities)):
-            if i != city and i not in visited:
+            if i != city and i not in self.visited:
                 distance = self.calculate_distance(self.coordinates[city], self.coordinates[i])
-                edges.append([city, i, distance])
+                edges.append([i, distance])
 
         return edges
 
     def find_min_spanning_tree(self):
-        result = 0
-        current_city = 1
-        visited = set([1])
+        total_distance = 0
+        self.visited.add(1)
         heap = MinHeap()
 
-        for edge in self.find_edges(current_city,visited):
+        for edge in self.find_edges(1,visited):
             heap.insert(edge)
 
         while len(visited) < len(self.number_of_cities):
 
             while True:
                 min_edge = heap.extract_min()
-                min_cost = min_node.value
-                if min_edge.end_vertex.key not in visited:
+                min_cost = min_edge[1]
+                if min_edge[1] not in visited:
                     break
 
-            result += min_cost
-            visited.add(min_edge.end_vertex.key)
-            current_vertex = min_edge.end_vertex
+            total_distance += min_cost
+            visited.add(min_edge[0])
+            new_city = min_edge[0]
 
-            for edge in current_vertex.out_edges:
-                if edge.end_vertex not in visited:
-                    heap.insert(Node(edge.cost, edge))
+            for edge in self.find_edges(new_city):
+                heap.insert(edge)
 
-        return result
-
-
-# v1 = Vertex(1)
-# v2 = Vertex(2)
-# v3 = Vertex(3)
-# v4 = Vertex(4)
-# e1 = Edge(v1, v2, 1)
-# e2 = Edge(v1, v3, 4)
-# e3 = Edge(v1, v4, 3)
-# e4 = Edge(v3, v4, 5)
-# e5 = Edge(v2, v4, 2)
-#
-# e6 = Edge(v2, v1, 1)
-# e7 = Edge(v3, v1, 4)
-# e8 = Edge(v4, v1, 3)
-# e9 = Edge(v4, v3, 5)
-# e10 = Edge(v4, v2, 2)
-#
-# v1.add_out_edge(e1)
-# v1.add_out_edge(e2)
-# v1.add_out_edge(e3)
-# v3.add_out_edge(e4)
-# v2.add_out_edge(e5)
-#
-# v2.add_out_edge(e6)
-# v3.add_out_edge(e7)
-# v4.add_out_edge(e8)
-# v4.add_out_edge(e9)
-# v4.add_out_edge(e10)
+        return (total_distance, new_city)
 
 p = Prims()
-# p.add_vertex(v1)
-# p.add_vertex(v2)
-# p.add_vertex(v3)
-# p.add_vertex(v4)
 p.read_file('nn.txt')
-# print(p.find_min_spanning_tree())
