@@ -61,6 +61,7 @@ function solve_tsp_dp(filename)
     end
     result = copy(new_result)
   end
+
   shortest_dis = Inf
   all_cities = trues(number_of_cities)
   for j in range(2, number_of_cities - 1)
@@ -69,6 +70,7 @@ function solve_tsp_dp(filename)
       shortest_dis = score
     end
   end
+  
   return shortest_dis
 end
 
