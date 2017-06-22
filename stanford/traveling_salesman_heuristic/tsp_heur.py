@@ -6,41 +6,46 @@ class TSPHeuristic(object):
     def __init__(self):
         self.edges = None
         self.number_of_cities
+        self.cities = None
 
     def read_file(self, filename):
         f = open(filename, 'r')
-        coordinates = np
         for line in f:
             line = line.split(" ")
             if len(city) < 2:
                 self.number_of_cities = int(line[0])
-                coordinates = np.zeros((self.number_of_cities + 1, 2))
+                self.cities = np.zeros((self.number_of_cities + 1, 2))
             else:
                 for i in range(len(line)):
                     line[i] = int(line[i])
-                coordinates[line[0]] = [line[1], line[2]]
+                self.cities[line[0]] = [line[1], line[2]]
         f.close()
-        return coordinates
 
-    def
+    def calculate_distance(self,coord1, coord2):
+        return sqrt((coord1[0] - coord2[0])**2 + (coord1[1] - coord2[1])**2)
 
-    def add_vertex(self, vertex):
-        self.vertices[vertex.key] = vertex
+    def find_edges(self,city,visited):
+        edges = []
+        for i in range(1, len(self.cities)):
+            if i != city and i not in visited:
+                distance = self.calculate_distance(self.coordinates[city], self.coordinates[i])
+                edges.append([city, i, distance])
+
+        return edges
 
     def find_min_spanning_tree(self):
         result = 0
-        current_vertex = self.vertices[1]
-        visited = set([current_vertex.key])
+        current_city = 1
+        visited = set([1])
         heap = MinHeap()
 
-        for edge in current_vertex.out_edges:
-            heap.insert(Node(edge.cost, edge))
+        for edge in self.find_edges(current_city,visited):
+            heap.insert(edge)
 
-        while len(visited) != len(self.vertices):
+        while len(visited) < len(self.number_of_cities):
 
             while True:
-                min_node = heap.extract_min()
-                min_edge = min_node.edge
+                min_edge = heap.extract_min()
                 min_cost = min_node.value
                 if min_edge.end_vertex.key not in visited:
                     break

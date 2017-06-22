@@ -2,43 +2,44 @@ import numpy as np
 
 class MinHeap(object):
     def __init__(self):
-        self.store = 
+        self.store = []
 
-    def insert(self, node):
-        self.store.append(node)
-        self.heapify_up()
+    def insert(self, start_city, edges):
+        for edge in edges:
+            self.store.append(edges[i])
+            self.heapify_up()
 
     def extract_min(self):
         self.store[0], self.store[-1] = self.store[-1], self.store[0]
-        min_node = self.store.pop()
+        min_edge = self.store.pop()
         self.heapify_down()
-        return min_node
+        return min_edge
 
     def heapify_up(self):
-        new_node_idx = len(self.store) - 1
-        parent_idx = int((new_node_idx - 1) / 2)
-        while new_node_idx != 0 and \
-            self.store[new_node_idx].value < self.store[parent_idx].value:
-            self.store[new_node_idx], self.store[parent_idx] = \
-            self.store[parent_idx], self.store[new_node_idx]
-            new_node_idx = parent_idx
-            parent_idx = int((new_node_idx - 1) / 2)
+        new_edge_idx = len(self.store) - 1
+        parent_idx = int((new_edge_idx - 1) / 2)
+        while new_edge_idx != 0 and \
+            self.store[new_edge_idx][2] < self.store[parent_idx][2]:
+            self.store[new_edge_idx], self.store[parent_idx] = \
+            self.store[parent_idx], self.store[new_edge_idx]
+            new_edge_idx = parent_idx
+            parent_idx = int((new_edge_idx - 1) / 2)
 
     def heapify_down(self):
-        current_node_idx = 0
+        current_edge_idx = 0
         swap = True
         while swap:
             swap = False
-            children = self.children_indeces(current_node_idx)
-            swap_idx = current_node_idx
+            children = self.children_indeces(current_edge_idx)
+            swap_idx = current_edge_idx
             for child_idx in children:
-                if self.store[child_idx].value < self.store[swap_idx].value:
+                if self.store[child_idx][2] < self.store[swap_idx][2]:
                     swap_idx = child_idx
                     swap = True
             if swap:
-                self.store[current_node_idx], self.store[swap_idx] = \
-                self.store[swap_idx], self.store[current_node_idx]
-                current_node_idx = swap_idx
+                self.store[current_edge_idx], self.store[swap_idx] = \
+                self.store[swap_idx], self.store[current_edge_idx]
+                current_edge_idx = swap_idx
         return self.store
 
     def children_indeces(self, parent_idx):
