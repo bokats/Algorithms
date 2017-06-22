@@ -1,27 +1,28 @@
 from math import inf
-from heap import MinHeap, Node
+# from heap import MinHeap, Node
 import random
 
-class Prims(object):
+class TSPHeuristic(object):
     def __init__(self):
-        self.vertices = {}
+        self.edges = None
+        self.number_of_cities
 
     def read_file(self, filename):
-        file = open(filename, 'r')
-        for line in file:
-            edge = line.split(" ")
-            for i in range(len(edge)):
-                edge[i] = int(edge[i])
+        f = open(filename, 'r')
+        coordinates = np
+        for line in f:
+            line = line.split(" ")
+            if len(city) < 2:
+                self.number_of_cities = int(line[0])
+                coordinates = np.zeros((self.number_of_cities + 1, 2))
+            else:
+                for i in range(len(line)):
+                    line[i] = int(line[i])
+                coordinates[line[0]] = [line[1], line[2]]
+        f.close()
+        return coordinates
 
-            if len(edge) > 2:
-                if edge[0] not in self.vertices.keys():
-                    self.vertices[edge[0]] = Vertex(edge[0])
-                if edge[1] not in self.vertices.keys():
-                    self.vertices[edge[1]] = Vertex(edge[1])
-                new_edge1 = Edge(self.vertices[edge[0]], self.vertices[edge[1]], edge[2])
-                new_edge2 = Edge(self.vertices[edge[1]], self.vertices[edge[0]], edge[2])
-                self.vertices[edge[0]].add_out_edge(new_edge1)
-                self.vertices[edge[1]].add_out_edge(new_edge2)
+    def
 
     def add_vertex(self, vertex):
         self.vertices[vertex.key] = vertex
@@ -88,5 +89,5 @@ p = Prims()
 # p.add_vertex(v2)
 # p.add_vertex(v3)
 # p.add_vertex(v4)
-p.read_file('edges.txt')
-print(p.find_min_spanning_tree())
+p.read_file('nn.txt')
+# print(p.find_min_spanning_tree())
