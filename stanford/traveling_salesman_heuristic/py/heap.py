@@ -4,10 +4,9 @@ class MinHeap(object):
     def __init__(self):
         self.store = []
 
-    def insert(self, edges):
-        for edge in edges:
-            self.store.append(edges[i])
-            self.heapify_up()
+    def insert(self, edge):
+        self.store.append(edge)
+        self.heapify_up()
 
     def extract_min(self):
         self.store[0], self.store[-1] = self.store[-1], self.store[0]
@@ -19,7 +18,7 @@ class MinHeap(object):
         new_edge_idx = len(self.store) - 1
         parent_idx = int((new_edge_idx - 1) / 2)
         while new_edge_idx != 0 and \
-            self.store[new_edge_idx][1] < self.store[parent_idx][1]:
+        self.store[new_edge_idx][2] < self.store[parent_idx][2]:
             self.store[new_edge_idx], self.store[parent_idx] = \
             self.store[parent_idx], self.store[new_edge_idx]
             new_edge_idx = parent_idx
@@ -33,7 +32,7 @@ class MinHeap(object):
             children = self.children_indeces(current_edge_idx)
             swap_idx = current_edge_idx
             for child_idx in children:
-                if self.store[child_idx][1] < self.store[swap_idx][1]:
+                if self.store[child_idx][2] < self.store[swap_idx][2]:
                     swap_idx = child_idx
                     swap = True
             if swap:
