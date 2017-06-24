@@ -22,15 +22,19 @@ class TSPHeuristic(object):
         for line in f:
             line = line.split(" ")
             if len(line) < 2:
-                self.number_of_cities = int(line[0])
+                self.number_of_cities = 50
                 self.cities = np.zeros((self.number_of_cities + 1, 2))
             else:
+                if line[0] == '51':
+                    break
                 for i in range(1, len(line)):
                     line[i] = float(line[i])
                 self.cities[int(line[0])] = [line[1], line[2]]
 
         for i in range(1, self.number_of_cities + 1):
             self.city_visits[i] = 0
+
+        self.city_visits[1] = 1
 
         f.close()
 
@@ -55,13 +59,11 @@ class TSPHeuristic(object):
             heap.insert(edge)
 
         while len(self.visited) < self.number_of_cities:
-            
+
             while True:
                 min_edge = heap.extract_min()
                 min_cost = min_edge[2]
-                if min_edge[1] not in self.visited and \
-                self.city_visits[min_edge[0]] < 2 and \
-                self.city_visits[min_edge[1]] < 2:
+                if min_edge[1] not in self.visited:
                     break
 
             self.city_visits[min_edge[0]] += 1

@@ -18,7 +18,10 @@ class MinHeap(object):
         new_edge_idx = len(self.store) - 1
         parent_idx = int((new_edge_idx - 1) / 2)
         while new_edge_idx != 0 and \
-        self.store[new_edge_idx][2] < self.store[parent_idx][2]:
+        self.store[new_edge_idx][2] <= self.store[parent_idx][2]:
+            if self.store[new_edge_idx][2] == self.store[parent_idx][2]:
+                if self.store[new_edge_idx][1] > self.store[parent_idx][1]:
+                    break
             self.store[new_edge_idx], self.store[parent_idx] = \
             self.store[parent_idx], self.store[new_edge_idx]
             new_edge_idx = parent_idx
@@ -32,7 +35,10 @@ class MinHeap(object):
             children = self.children_indeces(current_edge_idx)
             swap_idx = current_edge_idx
             for child_idx in children:
-                if self.store[child_idx][2] < self.store[swap_idx][2]:
+                if self.store[child_idx][2] <= self.store[swap_idx][2]:
+                    if self.store[child_idx][2] == self.store[swap_idx][2]:
+                        if self.store[child_idx][1] > self.store[swap_idx][1]:
+                            continue
                     swap_idx = child_idx
                     swap = True
             if swap:
@@ -51,25 +57,3 @@ class MinHeap(object):
             if right < length:
                 result.append(right)
         return result
-
-# Tests
-
-# n1 = Node(1)
-# n2 = Node(2)
-# n3 = Node(3)
-# n4 = Node(4)
-#
-# h = MinHeap()
-# h.insert(n4)
-# assert len(h.get_store()) == 1
-# h.insert(n3)
-# h.insert(n2)
-# h.insert(n1)
-# assert len(h.get_store()) == 4
-# assert h.get_store()[0] == n1
-# assert h.extract_min() == n1
-# assert len(h.get_store()) == 3
-# assert h.extract_min() == n2
-# assert len(h.get_store()) == 2
-# assert h.extract_min() == n3
-# assert len(h.get_store()) == 1
