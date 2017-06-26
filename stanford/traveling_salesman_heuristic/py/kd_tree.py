@@ -5,7 +5,6 @@ from math import sqrt
 
 class TSPHeuristic(object):
     def __init__(self, filename):
-        self.edges = None
         self.kd_tree = None
         self.city_visits = {}
         self.visited = set([])
@@ -59,8 +58,8 @@ class TSPHeuristic(object):
                     break
                 else:
                     self.kth_city[min_edge[0]] += 1
-                    self.add_correct_edge(min_edge[0])
-                    # self.query_kd_tree(min_edge[0])
+                    # self.add_correct_edge(min_edge[0])
+                    self.query_kd_tree(min_edge[0])
 
             self.city_visits[min_edge[0]] += 1
             self.city_visits[min_edge[1]] += 1
@@ -93,7 +92,6 @@ class TSPHeuristic(object):
     def add_correct_edge(self,start_city):
         if self.city_visits[start_city] > 1:
             return
-        result = self.kd_tree.query(self.cities[start_city], self.number_of_cities)
         all_results = self.kd_tree.query(self.cities[start_city], self.number_of_cities)
         for i in range(self.kth_city[start_city] - 1,len(all_results[0])):
             city = all_results[1][i] + 1
