@@ -1,7 +1,7 @@
 using NearestNeighbors
 using Debug
 
-function solve_tsp(filename)
+@debug function solve_tsp(filename)
   coordinates = nothing
   city_visits = nothing
   visited = Set{Int32}()
@@ -11,11 +11,10 @@ function solve_tsp(filename)
   heap_start_city = Array{Int32, 1}()
   heap_end_city = Array{Int32, 1}()
   kth_city = nothing
-
+  number_of_cities = 0
 
   function read_file(filename)
     file = open(filename)
-    number_of_cities = 0
     coordinates = 0
     for line in eachline(file)
       line = split(line, " ")
@@ -42,11 +41,14 @@ function solve_tsp(filename)
     total_distance = 0.0
     push!(visited, 1)
 
-    find_correct_edge(1)
+    find_correct_edge(Int32(1))
 
     while length(visited) < size(coordinates, 2)
-      println(length(visited))
+      # println(length(visited))
       test = true
+      start_city = nothing
+      end_city = nothing
+      distance = nothing
       while test == true
         edge_idx = extract_min()
         start_city = heap_start_city[edge_idx]
@@ -57,10 +59,10 @@ function solve_tsp(filename)
           test = false
         else
           kth_city[start_city] += 1
-          query_kd_tree(start_city)
+          find_correct_edge(start_city)
         end
       end
-
+      println(start_city, end_city)
       city_visits[start_city] += 1
       city_visits[end_city] += 1
       total_distance += distance
@@ -77,32 +79,34 @@ function solve_tsp(filename)
     return sqrt((coord1[1] - coord2[1])^2 + (coord1[2] - coord2[2])^2)
   end
 
-  function query_and_add_to_heap(start_city::Int)
+  function query_and_add_to_heap(start_city::Int32)
 
     if city_visits[start_city] > 1
       return
     end
-    kd_result = knn(kd_tree, coordinates[:,start_city], kth_city[start_city])
-    new_city, distance = kd_result[1][1], kd_result[2][1]
+    println(kth_city[1])
+    println(knn(kd_tree, coordinates[:,start_city],2), "tree")
+    kd_result = knn(kd_tree, coordinates[:,start_city], Int64(kth_city[start_city]))
+
+    new_city, distance = Int32(kd_result[1][1]), kd_result[2][1]
+    # println(start_city, new_city, distance)
     insert(start_city, new_city, distance)
   end
 
-  function find_correct_edge(start_city)
+  function find_correct_edge(start_city::Int32)
     if city_visits[start_city] > 1
       return
     end
-    println(kd_tree)
-    println(coordinates[:,start_city])
-    println(kth_city[start_city])
-
-    @debug kd_result = knn(kd_tree, coordinates[:,start_city], kth_city[start_city])
-    new_city, distance = kd_result[1][1], kd_result[2][1]
-    while in(new_city, visited) == true || city_visits[new_city] > 1
+    kd_result = knn(kd_tree, coordinates[:,start_city], number_of_cities, true)
+    println(kd_result)
+    for i = (kth_city[start_city], size(kd_result, 1))
+      city = kd_result[1][i]
+      if in(city, visited) == false && city_visits[city] < 2
+        insert(start_city, Int32(city), kd_result[2][i])
+        return
+      end
       kth_city[start_city] += 1
-      kd_result = knn(kd_tree, coordinates[:,start_city], kth_city[start_city])
-      new_city, distance = kd_result[1][1], kd_result[2][1]
     end
-    insert(start_city, new_city, distance)
   end
 
   function connect_last_to_first(last::Int32, distance::Float64)
@@ -112,15 +116,15 @@ function solve_tsp(filename)
 
   function insert(start_city::Int32, end_city::Int32, distance::Float64)
     next_idx = length(heap_dis)
-    push!(heap, length + 1)
+    push!(heap, next_idx + 1)
     push!(heap_dis, distance)
     push!(heap_start_city, start_city)
     push!(heap_end_city, end_city)
-    heapify_up(heap)
+    heapify_up()
   end
 
   function extract_min()
-    println(heap)
+    # println()
     heap[1], heap[length(heap)] = heap[length(heap)], heap[1]
     min_edge = pop!(heap)
     heapify_down()
@@ -130,15 +134,21 @@ function solve_tsp(filename)
   function heapify_up()
     new_edge_idx = length(heap)
     parent_idx = find_parent_idx(new_edge_idx)
+    # println(heap)
+    # print(new_edge_idx, "first")
+    # print(parent_idx, "first")
+
     while new_edge_idx != 1 && heap_dis[heap[new_edge_idx]] <=
     heap_dis[heap[parent_idx]]
       if heap_dis[heap[new_edge_idx]] == heap_dis[heap[parent_idx]] &&
-      heap_end_city[new_edge_idx] > heap_end_city[parent_idx]
+      heap_end_city[heap[new_edge_idx]] > heap_end_city[heap[parent_idx]]
         break
       end
       heap[new_edge_idx], heap[parent_idx] = heap[parent_idx], heap[new_edge_idx]
       new_edge_idx = parent_idx
       parent_idx = find_parent_idx(new_edge_idx)
+      # print(new_edge_idx)
+      # print(parent_idx)
     end
   end
 
@@ -166,8 +176,8 @@ function solve_tsp(filename)
     end
   end
 
-  function find_parent_idx(idx::Int64)
-    return floor(Int,(idx - 1) / 2)
+  function find_parent_idx(idx::Int)
+    return floor(Int,idx / 2)
   end
 
   function find_children_indeces(idx::Int64)

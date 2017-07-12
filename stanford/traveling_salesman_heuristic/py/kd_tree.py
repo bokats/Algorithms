@@ -2,6 +2,7 @@ from scipy import spatial
 import numpy as np
 from heap import MinHeap
 from math import sqrt
+import time
 
 class TSPHeuristic(object):
     def __init__(self, filename):
@@ -22,8 +23,6 @@ class TSPHeuristic(object):
                 self.cities = np.zeros((self.number_of_cities + 1, 2))
                 self.kth_city = np.full(self.number_of_cities + 1, 2, dtype=np.int32)
             else:
-                # if line[0] == '5001':
-                #     break
                 for i in range(1, len(line)):
                     line[i] = float(line[i])
                 self.cities[int(line[0])] = [line[1], line[2]]
@@ -46,20 +45,23 @@ class TSPHeuristic(object):
         self.visited.add(1)
 
         self.query_kd_tree(1)
-
+        start = time.time()
         while len(self.visited) < self.number_of_cities:
-            print(len(self.visited))
             while True:
                 min_edge = self.heap.extract_min()
-                # import pdb; pdb.set_trace()
                 if min_edge[1] not in self.visited and \
                 self.city_visits[min_edge[0]] < 2 and \
                 self.city_visits[min_edge[1]] < 2:
                     break
                 else:
                     self.kth_city[min_edge[0]] += 1
-                    # self.add_correct_edge(min_edge[0])
                     self.query_kd_tree(min_edge[0])
+
+            if len(self.visited) % 500 == 0:
+                end = time.time()
+                print(end - start)
+                print(len(self.visited))
+                start = time.time()
 
             self.city_visits[min_edge[0]] += 1
             self.city_visits[min_edge[1]] += 1
@@ -70,7 +72,6 @@ class TSPHeuristic(object):
             for i in range(2):
                 self.add_correct_edge(min_edge[i])
 
-
         print(total_distance)
         return (min_edge[1], total_distance)
 
@@ -78,7 +79,6 @@ class TSPHeuristic(object):
         if self.city_visits[start_city] > 1:
             return
         kd_result = self.kd_tree.query(self.cities[start_city], self.kth_city[start_city])
-        # import pdb; pdb.set_trace()
         distance, new_city = kd_result[0][-1], kd_result[1][-1]
         self.heap.insert([start_city, new_city + 1, distance])
 
@@ -97,7 +97,6 @@ class TSPHeuristic(object):
             city = all_results[1][i] + 1
             if city not in self.visited and self.city_visits[city] < 2:
                 self.heap.insert([start_city, city, all_results[0][i]])
-                # import pdb; pdb.set_trace()
                 return
             self.kth_city[start_city] += 1
 

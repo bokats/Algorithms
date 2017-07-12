@@ -55,7 +55,3 @@ function find_children_indeces(idx::Int64, array_length::Int64)
   end
   return result
 end
-
-function calculate_distance(coord1::Array{Float64,1}, coord2::Array{Float64,1})
-  return sqrt((coord1[1] - coord2[1])^2 + (coord1[2] - coord2[2])^2)
-end
