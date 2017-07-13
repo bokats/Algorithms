@@ -13,6 +13,10 @@ class TwoSat(object):
 
     def run_two_sat(self,filename):
         self.read_file(filename)
+        self.DFS_loop()
+        self.reverse_edges()
+        self.DFS_loop()
+        self.check_sat()
 
     def read_file(self,filename):
         f = open(filename, 'r')
@@ -25,6 +29,8 @@ class TwoSat(object):
                 self.add_vertices(line[0], line[1])
                 self.add_edges(line[0], line[1])
 
+        self.vertices = list(self.vertices)
+        self.vertices.sort(reverse=True)
         f.close()
 
     def add_edges(self, start_vertex, dest_vertex):
@@ -44,10 +50,15 @@ class TwoSat(object):
         self.vertices.add(dest_vertex)
         self.vertices.add(-dest_vertex)
 
-    def find_SCCs(self):
-
+    def reset_variables(self):
+        self.explored = set([])
+        self.s = None
+        self.time = 0
+        self.finishing_time = {}
+        self.leader = {}
 
     def DFS_loop(self):
+
         for vertex in self.vertices:
             if vertex not in self.explored:
                 self.s = vertex
@@ -89,7 +100,7 @@ class TwoSat(object):
                     reversed_edges[self.finishing_time[dest_vertex]].\
                     append(finishing_time[start_vertex])
 
-        return reversed_edges
+        self.edges = reversed_edges
 
     def check_sat(self):
         for vertex in self.vertices:
@@ -98,4 +109,4 @@ class TwoSat(object):
                 return
         print("Satisfiable")
 
-TwoSat('./txt_files/2sat1.txt')
+TwoSat('./tests/test1.txt')
