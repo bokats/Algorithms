@@ -9,12 +9,16 @@ class TwoSat(object):
         self.time = 0
         self.finishing_time = {}
         self.leader = {}
+        self.actual_to_proxy = None
+        self.proxy_to_actual = None
         self.run_two_sat(filename)
 
     def run_two_sat(self,filename):
         self.read_file(filename)
         self.DFS_loop()
+        self.get_referenced_nodes()
         self.reverse_edges()
+        self.reset_variables()
         self.DFS_loop()
         self.check_sat()
 
@@ -57,6 +61,12 @@ class TwoSat(object):
         self.finishing_time = {}
         self.leader = {}
 
+    def get_referenced_nodes(self):
+        self.actual_to_proxy = self.finishing_time;
+        self.proxy_to_actual = np.zeros(len(self.finishing_time.keys()) + 1, int)
+        for vertex in self.finishing_time.keys():
+            self.proxy_to_actual[self.finishing_time[vertex]] = vertex
+
     def DFS_loop(self):
 
         for vertex in self.vertices:
@@ -95,18 +105,22 @@ class TwoSat(object):
             for dest_vertex in self.edges[start_vertex]:
                 if self.finishing_time[dest_vertex] not in reversed_edges.keys():
                     reversed_edges[self.finishing_time[dest_vertex]] = \
-                    [finishing_time[start_vertex]]
+                    [self.finishing_time[start_vertex]]
                 else:
                     reversed_edges[self.finishing_time[dest_vertex]].\
-                    append(finishing_time[start_vertex])
+                    append(self.finishing_time[start_vertex])
 
+        self.vertices = [num for num in range(len(self.vertices), 0,-1)]
         self.edges = reversed_edges
 
     def check_sat(self):
         for vertex in self.vertices:
-            if vertex > 0 and self.leader[vertex] == self.leader[-vertex]:
-                print("Unsatisfiable")
+            if self.proxy_to_actual[vertex] > 0 and self.leader[vertex] == \
+            self.leader[self.actual_to_proxy[-self.proxy_to_actual[vertex]]]:
+                print("Unsatisfiable", 0)
                 return
-        print("Satisfiable")
+        print("Satisfiable", 1)
 
-TwoSat('./tests/test1.txt')
+for i in range(1,7):
+    filename = './txt_files/2sat' + str(i) + '.txt'
+    TwoSat(filename)
