@@ -1,11 +1,12 @@
 import numpy as np
+import time
 
 class TwoSat(object):
     def __init__(self,filename):
         self.vertices = set([])
         self.edges = {}
         self.explored = set([])
-        self.s = None
+        self.starting_vertex = None
         self.time = 0
         self.finishing_time = {}
         self.leader = {}
@@ -56,7 +57,7 @@ class TwoSat(object):
 
     def reset_variables(self):
         self.explored = set([])
-        self.s = None
+        self.starting_vertex = None
         self.time = 0
         self.finishing_time = {}
         self.leader = {}
@@ -71,7 +72,7 @@ class TwoSat(object):
 
         for vertex in self.vertices:
             if vertex not in self.explored:
-                self.s = vertex
+                self.starting_vertex = vertex
                 self.DFS(vertex)
 
     def DFS(self, vertex):
@@ -80,7 +81,7 @@ class TwoSat(object):
         while len(stack) > 0:
             vertex = stack[-1]
             self.explored.add(vertex)
-            self.leader[vertex] = self.s
+            self.leader[vertex] = self.starting_vertex
             children = []
 
             if vertex in self.edges.keys():
@@ -121,6 +122,9 @@ class TwoSat(object):
                 return
         print("Satisfiable", 1)
 
+start = time.time()
 for i in range(1,7):
     filename = './txt_files/2sat' + str(i) + '.txt'
     TwoSat(filename)
+end = time.time()
+print("Time taken", end-start)
